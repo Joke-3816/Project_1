@@ -1,0 +1,4 @@
+ # General Information
+    Everything in this project was mostly copied by me from YouTuber "Corey Schafer". I follow his series, where he explains the workflow of FastAPI projects. I rewrote his code and made some minor alterations in the it, but the whole project is his. I want to upload my rewritings of his code on GitHUB, so I would keep track of things I have learned watching his series, and showcase my ability to work with FastAPI projects. Even though, code is not mine, I can understand everything in it myself and duplicate for any other project. 
+# Project itself
+    This a back-end project with a site, where people can sign up as users and post something. Back end is made using FastAPI, SQLalchemy, Pydantic and SQLlite with some basic HTML. 
