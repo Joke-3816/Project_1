@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException, status, Depends
 from fastapi.templating import Jinja2Templates
-from schemas import PostCreate,PostResponse, UserResponse, UserCreate
+from schemas import PostCreate,PostResponse, UserResponse, UserCreate, PostUpdate
 from sqlalchemy import select 
 from sqlalchemy.orm import Session
 import models
@@ -106,3 +106,26 @@ def get_post(request: Request, post_id: int, db:Annotated[Session,Depends(get_db
     if post is None:
         raise HTTPException(status_code=404, detail="Post not found")
     return templates.TemplateResponse(request,"posts.html",{"author": author,"post": post,"title": title })
+
+
+@app.put("posts/{post_id}",include_in_schema=False)
+def update_post_full(request: Request, post_id: int, post_data: PostCreate, db:Annotated[Session,Depends(get_db)]):
+    result = db.execute(select(models.Post).where(models.Post.id == post_id),)
+    post = result.scalars().first()
+    if post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+    if post_data.user_id != post.user_id:
+        result1 = db.execute(select(models.User).where(models.User.id == post.user_id))
+        user = result1.scalars().first()
+        if not user:
+            raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found",
+                )
+    post.title=post_data.title
+    post.content=post_data.content
+    post.user_id=post_data.user_id
+
+    db.commit()
+    db.refresh(post)
+    return post
